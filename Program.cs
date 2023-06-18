@@ -1,109 +1,105 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Runtime.CompilerServices;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using SetCardANN;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 CardDeck deck = new CardDeck();
-//Console.WriteLine(deck.InputOutputSet.Count);
+var neuralNetwork = new NeuralNetwork();
+// Training data
 
-//foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
-//{
-//    if (pair.Value[0] == 1) Console.WriteLine("<{0},{1},{2}>,<{3}>", pair.Key[0].ToString(), pair.Key[1].ToString(), pair.Key[2].ToString(), pair.Value[0].ToString());
-//}
-
-//Console.ReadKey();
-ANN ann = new ANN();
 List<double[]> selectedInput = new List<double[]>();
 List<double[]> selectedOutput = new List<double[]>();
 selectedInput.AddRange(deck.SetInputOutput.Keys);
 selectedOutput.AddRange(deck.SetInputOutput.Values);
 Random rnd = new Random();
-for (int i = 0; i < 2000; i++)
+for (int i = 0; i < 200; i++)
 {
     int index = rnd.Next(50000);
     selectedInput.Add(deck.InputOutputSet.Keys.ElementAt(index));
     selectedOutput.Add(deck.InputOutputSet.Values.ElementAt(index));
 }
 
-double[][] inputs = selectedInput.ToArray();
-double[][] outputs = selectedOutput.ToArray();
-//double[][] inputs = deck.InputOutputSet.Keys.ToArray();
-//double[][] outputs = deck.InputOutputSet.Values.ToArray();
-// double[][] inputs = new double[1000][];
-// double[][] outputs = new double[1000][];
-// Random random = new Random();
-// for (int i = 0; i < 1000;i++)
-// {
-//     int index = random.Next(999);
-//     inputs[i] = deck.InputOutputSet.Keys.ElementAt(index);
-//     outputs[i] = deck.InputOutputSet.Values.ElementAt(index);
-// }
 
-const double learningRate = 0.1;
-Console.WriteLine("----------------BEFORE TRAINING---------------------");
-Console.WriteLine("Before training, weights is " + ann.printWeights());
-Console.WriteLine("Initial input result: ");
-//for (int i = 0; i < inputs.Length; i++)
+double[][] trainingDataInputs = selectedInput.ToArray();
+
+double[] trainingDataOutputs = new double[selectedOutput.Count];
+double[][] candidate = selectedOutput.ToArray();
+for (int i = 0; i < trainingDataInputs.Length; i++)
+{
+    trainingDataOutputs[i] = candidate[i][0];
+}
+
+//double[][] trainingDataInputs = deck.SetInputOutput.Keys.ToArray();
+
+//double[] trainingDataOutputs = new double[deck.SetInputOutput.Values.Count];
+//double[][] candidate = deck.SetInputOutput.Values.ToArray();
+//for (int i = 0; i < trainingDataInputs.Length; i++)
 //{
-//    Console.WriteLine("Input entry [" + i + "]: " + ann.forwardPropagate(inputs[i]));
-//    if (ann.forwardPropagate(inputs[i]) >= 0.5)
-//    {
-//        Console.WriteLine("The result of this case might be TRUE before training.");
-//    }
-//    else
-//    {
-//        Console.WriteLine("The result of this case might be FALSE before training.");
-//    }
+//    trainingDataOutputs[i] = candidate[i][0];
 //}
 
-ann.train(inputs, outputs, learningRate, 1000);
+Console.WriteLine("Start Training");
+//double[][] trainingDataInputs =
+//{
+//            new double[] {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+//            // Add more training inputs here
+//        };
 
-//Console.WriteLine("----------------AFTER TRAINING---------------------");
-//Console.WriteLine("After training, weights is " + ann.printWeights());
-//Console.WriteLine("Post-training input result: ");
-//for (int i = 0; i < inputs.Length; i++)
+//double[] trainingDataOutputs =
 //{
-//    Console.WriteLine("Input entry [" + i + "]: " + ann.forwardPropagate(inputs[i]));
-//    if (ann.forwardPropagate(inputs[i]) >= 0.5)
-//    {
-//        Console.WriteLine("The result of this case might be TRUE after training.");
-//    }
-//    else
-//    {
-//        Console.WriteLine("The result of this case might be FALSE after training.");
-//    }
-//}
-//double output = ann.forwardPropagate(testCase);
-//Console.WriteLine("----------------TEST CASE---------------------");
-//Console.WriteLine("Test case result: " + output);
-//if (output >= 0.5)
-//{
-//    Console.WriteLine("The result of test case might be TRUE after training.");
-//}
-//else
-//{
-//    Console.WriteLine("The result of test case might be FALSE after training.");
-//}
+//            0.75,
+//            // Add corresponding training outputs here
+//        };
+
+// Train the network for a specified number of epochs
+int epochs = 100;
+double learningRate = 0.05;
+
+for (int epoch = 0; epoch < epochs; epoch++)
+{
+    Console.Write("At epoch {0}, ",epoch);
+    double error = 0;
+    for (int i = 0; i < trainingDataInputs.Length; i++)
+    {
+        double[] input = trainingDataInputs[i];
+        double targetOutput = trainingDataOutputs[i];
+        error += neuralNetwork.FeedForward(trainingDataInputs[i]) - targetOutput;
+        neuralNetwork.Backpropagation(input, targetOutput, learningRate);
+    }
+    Console.WriteLine("the error is {0}", error / 4);
+}
+
+Console.WriteLine("Finished Training");
+
+//// Test the trained network
+//double[] inputToTest = new double[12] { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
+//double output = neuralNetwork.FeedForward(inputToTest);
+//Console.WriteLine("Output: " + output);
 
 Console.WriteLine("----------------TEST CASE---------------------");
 double totalCases = deck.InputOutputSet.Count;
 double correctCase = 0;
 foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
 {
-   double guess = ann.forwardPropagate(pair.Key);
+    double guess = neuralNetwork.FeedForward(pair.Key);
     //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
     //guess = ANN.DSigmoid(guess);
-    int normalizedGuess = guess>0.5? 1: 0;
-    Console.WriteLine(guess);
-   //Console.WriteLine("Guess: " + normalizedGuess);
-   int actualValue = (int)pair.Value[0]; 
-   //Console.WriteLine("Actual: " + actualValue);
-   if (normalizedGuess == actualValue) correctCase++;
-//    else
-//    {
-//        //Console.WriteLine("Case: " + deck.SetToString(pair.Key));
-//        Console.WriteLine("Guess: " + normalizedGuess);
-//        Console.WriteLine("Actual: " + actualValue);
-//    }
+    int normalizedGuess = guess > 0.5 ? 1 : 0;
+    //Console.WriteLine(guess);
+    //Console.WriteLine("Guess: " + normalizedGuess);
+    int actualValue = (int)pair.Value[0];
+    //Console.WriteLine("Actual: " + actualValue);
+    if (normalizedGuess == actualValue) correctCase++;
+    //    else
+    //    {
+    //        //Console.WriteLine("Case: " + deck.SetToString(pair.Key));
+    //        Console.WriteLine("Guess: " + normalizedGuess);
+    //        Console.WriteLine("Actual: " + actualValue);
+    //    }
 }
 
 // Random random = new Random();
@@ -129,10 +125,32 @@ foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
 // }
 
 Console.WriteLine("Correct Case: " + correctCase);
-Console.WriteLine("Error Case: " + (totalCases-correctCase));
+Console.WriteLine("Error Case: " + (totalCases - correctCase));
 Console.WriteLine("Accuracy: " + (correctCase / (totalCases)));
-Console.WriteLine(ann.printWeights());
+Console.WriteLine(neuralNetwork.PrintWeights());
 
-Console.WriteLine("NOTE: THE TEST CASE CONTAINS 3 ZEROS AND THUS RESULT IN CONSTANT VALUE IN SIGMOID(X)");
-Console.WriteLine("A RANDOM BIAS IS GENERATED SO THE RESULT MAY VARY");
-Console.WriteLine("-------------END OF RESULT----------------");
+Console.WriteLine("Among them all, for a real set, the accuracy is");
+double totalTrueCases = deck.SetInputOutput.Count;
+double correctTrueCase = 0;
+foreach (KeyValuePair<double[], double[]> pair in deck.SetInputOutput)
+{
+    double guess = neuralNetwork.FeedForward(pair.Key);
+    //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
+    //guess = ANN.DSigmoid(guess);
+    int normalizedGuess = guess > 0.5 ? 1 : 0;
+    //Console.WriteLine(guess);
+    //Console.WriteLine("Guess: " + normalizedGuess);
+    int actualValue = (int)pair.Value[0];
+    //Console.WriteLine("Actual: " + actualValue);
+    if (normalizedGuess == actualValue) correctTrueCase++;
+    //    else
+    //    {
+    //        //Console.WriteLine("Case: " + deck.SetToString(pair.Key));
+    //        Console.WriteLine("Guess: " + normalizedGuess);
+    //        Console.WriteLine("Actual: " + actualValue);
+    //    }
+}
+
+Console.WriteLine("Correct Case: " + correctTrueCase);
+Console.WriteLine("Error Case: " + (totalTrueCases - correctTrueCase));
+Console.WriteLine("Accuracy: " + (correctTrueCase / (totalTrueCases)));
