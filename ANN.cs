@@ -63,11 +63,8 @@ namespace SetCardANN
                         weights[i] += learningRate * adjustment;
                     }
                 }
-                if (((int)((double)iteration * 100 / numIterations))%10==0)
-                {
-                    Console.WriteLine(((double)iteration * 100 / numIterations) + "% with error of " + averageError / 4);
-                }
-                
+                Console.WriteLine(((double)iteration * 100 / numIterations) + "% with error of " + averageError / 4);
+
             }
         }
 

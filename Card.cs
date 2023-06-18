@@ -22,7 +22,7 @@ namespace SetCardANN
         {
             get
             {
-                double[] result = { Array.IndexOf(colors, this.Color), Array.IndexOf(shapes, this.Shape), Array.IndexOf(shadings, this.Shading), Array.IndexOf(numbers, this.Number) };
+                double[] result = { Array.IndexOf(colors, this.Color)-1, Array.IndexOf(shapes, this.Shape)-1, Array.IndexOf(shadings, this.Shading)-1, Array.IndexOf(numbers, this.Number)-1 };
                 return result;
             }
         }

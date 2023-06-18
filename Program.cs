@@ -12,8 +12,22 @@ CardDeck deck = new CardDeck();
 
 //Console.ReadKey();
 ANN ann = new ANN();
-double[][] inputs = deck.SetInputOutput.Keys.ToArray();
-double[][] outputs = deck.SetInputOutput.Values.ToArray();
+List<double[]> selectedInput = new List<double[]>();
+List<double[]> selectedOutput = new List<double[]>();
+selectedInput.AddRange(deck.SetInputOutput.Keys);
+selectedOutput.AddRange(deck.SetInputOutput.Values);
+Random rnd = new Random();
+for (int i = 0; i < 2000; i++)
+{
+    int index = rnd.Next(50000);
+    selectedInput.Add(deck.InputOutputSet.Keys.ElementAt(index));
+    selectedOutput.Add(deck.InputOutputSet.Values.ElementAt(index));
+}
+
+double[][] inputs = selectedInput.ToArray();
+double[][] outputs = selectedOutput.ToArray();
+//double[][] inputs = deck.InputOutputSet.Keys.ToArray();
+//double[][] outputs = deck.InputOutputSet.Values.ToArray();
 // double[][] inputs = new double[1000][];
 // double[][] outputs = new double[1000][];
 // Random random = new Random();
@@ -24,7 +38,7 @@ double[][] outputs = deck.SetInputOutput.Values.ToArray();
 //     outputs[i] = deck.InputOutputSet.Values.ElementAt(index);
 // }
 
-const double learningRate = 0.05;
+const double learningRate = 0.1;
 Console.WriteLine("----------------BEFORE TRAINING---------------------");
 Console.WriteLine("Before training, weights is " + ann.printWeights());
 Console.WriteLine("Initial input result: ");
@@ -41,7 +55,7 @@ Console.WriteLine("Initial input result: ");
 //    }
 //}
 
-ann.train(inputs, outputs, learningRate, 100);
+ann.train(inputs, outputs, learningRate, 1000);
 
 //Console.WriteLine("----------------AFTER TRAINING---------------------");
 //Console.WriteLine("After training, weights is " + ann.printWeights());
@@ -71,7 +85,7 @@ ann.train(inputs, outputs, learningRate, 100);
 //}
 
 Console.WriteLine("----------------TEST CASE---------------------");
-double totalCases = deck.CardInputOutputSet.Count;
+double totalCases = deck.InputOutputSet.Count;
 double correctCase = 0;
 foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
 {
@@ -79,6 +93,7 @@ foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
     //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
     //guess = ANN.DSigmoid(guess);
     int normalizedGuess = guess>0.5? 1: 0;
+    Console.WriteLine(guess);
    //Console.WriteLine("Guess: " + normalizedGuess);
    int actualValue = (int)pair.Value[0]; 
    //Console.WriteLine("Actual: " + actualValue);

@@ -78,6 +78,8 @@ namespace SetCardANN
 
         public void ConstructSetList()
         {
+            StringBuilder csvList = new StringBuilder();
+            csvList.AppendLine("Card1.Color,Card1.Shape,Card1.Shading,Card1.Number,Card2.Color,Card2.Shape,Card2.Shading,Card2.Number,Card3.Color,Card3.Shape,Card3.Shading,Card3.Number,Output,");
             foreach (Card c1 in this.Cards)
             {
                 foreach (Card c2 in this.Cards)
@@ -104,6 +106,20 @@ namespace SetCardANN
                                 double[] outKey = { 1 };
                                 this.SetInputOutput.Add(inKey, outKey);
                                 this.InputOutputSet.Add(inKey,outKey);
+                                string csv = "";
+                                //for(int i = 0;i<newSet.Length;i++)
+                                //{
+                                //    csv += newSet[i].Color+",";
+                                //    csv += newSet[i].Shape + ",";
+                                //    csv += newSet[i].Shading + ",";
+                                //    csv += newSet[i].Number + ",";
+                                //}
+                                for (int i = 0; i < inKey.Length; i++)
+                                {
+                                    csv += inKey[i] + ",";
+                                }
+                                csv += "1,";
+                                csvList.AppendLine(csv);
                                 this.CardInputOutputSet.Add(newSet, outKey);
                                 // Console.WriteLine(this.SetToString(newSet));
                             }
@@ -113,18 +129,47 @@ namespace SetCardANN
                                 Card[] nonSet = {c1,c2,c3 };
                                 this.InputOutputSet.Add(inKey, outKey);
                                 this.CardInputOutputSet.Add(nonSet, outKey);
+                                string csv = "";
+                                //for (int i = 0; i < newSet.Length; i++)
+                                //{
+                                //    csv += newSet[i].Color + ",";
+                                //    csv += newSet[i].Shape + ",";
+                                //    csv += newSet[i].Shading + ",";
+                                //    csv += newSet[i].Number + ",";
+                                //}
+                                for (int i = 0; i < inKey.Length; i++)
+                                {
+                                    csv += inKey[i] + ",";
+                                }
+                                csv += "0,";
+                                csvList.AppendLine(csv);
                             }
                         }
-                        else
+                        else if (this.IsDistinctCards(c1, c2, c3))
                         {
                             double[] outKey = { 0 };
                             Card[] nonSet = { c1, c2, c3 };
                             this.InputOutputSet.Add(inKey, outKey);
                             this.CardInputOutputSet.Add(nonSet, outKey);
+                            string csv = "";
+                            //for (int i = 0; i < nonSet.Length; i++)
+                            //{
+                            //    csv += nonSet[i].Color + ",";
+                            //    csv += nonSet[i].Shape + ",";
+                            //    csv += nonSet[i].Shading + ",";
+                            //    csv += nonSet[i].Number + ",";
+                            //}
+                            for (int i = 0; i < inKey.Length; i++)
+                            {
+                                csv += inKey[i] + ",";
+                            }
+                            csv += "0,";
+                            csvList.AppendLine(csv);
                         }
                     }
                 }
             }
+            File.WriteAllText(@"../../../SetCSV.txt",csvList.ToString());
         }
 
         public bool IsDistinctCards(Card card1, Card card2,Card card3)
