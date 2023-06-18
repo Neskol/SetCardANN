@@ -14,8 +14,7 @@ CardDeck deck = new CardDeck();
 ANN ann = new ANN();
 double[][] inputs = deck.InputOutputSet.Keys.ToArray();
 double[][] outputs = deck.InputOutputSet.Values.ToArray();
-double[] testCase = new double[] { 0,1,2 };
-const double learningRate = 0.05;
+const double learningRate = 0.01;
 Console.WriteLine("----------------BEFORE TRAINING---------------------");
 Console.WriteLine("Before training, weights is " + ann.printWeights());
 Console.WriteLine("Initial input result: ");
@@ -32,7 +31,7 @@ Console.WriteLine("Initial input result: ");
 //    }
 //}
 
-ann.train(inputs, outputs, learningRate, 2);
+ann.train(inputs, outputs, learningRate, 10000);
 
 //Console.WriteLine("----------------AFTER TRAINING---------------------");
 //Console.WriteLine("After training, weights is " + ann.printWeights());
@@ -64,23 +63,47 @@ ann.train(inputs, outputs, learningRate, 2);
 Console.WriteLine("----------------TEST CASE---------------------");
 double totalCases = deck.CardInputOutputSet.Count;
 double correctCase = 0;
-foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
+//foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
+//{
+//    double guess = ann.forwardPropagate(pair.Key);
+//    //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
+//    int normalizedGuess = guess>0.5? 1: 0;
+//    //Console.WriteLine("Guess: " + normalizedGuess);
+//    int actualValue = (int)pair.Value[0]; 
+//    //Console.WriteLine("Actual: " + actualValue);
+//    if (normalizedGuess == actualValue) correctCase++;
+//    else
+//    {
+//        Console.WriteLine("Case: " + deck.SetToString(pair.Key));
+//        Console.WriteLine("Guess: " + normalizedGuess);
+//        Console.WriteLine("Actual: " + actualValue);
+//    }
+//}
+
+Random random = new Random();
+int i;
+for (int c = 0; c < 1000; c++)
 {
-    double guess = ann.forwardPropagate(pair.Key);
+    i = random.Next(53000);
+    double[] key = deck.InputOutputSet.Keys.ElementAt(i);
+    double[] value = deck.InputOutputSet.Values.ElementAt(i);
+    double guess = ann.forwardPropagate(key);
     //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
-    int normalizedGuess = guess>0.5? 1: 0;
+    int normalizedGuess = guess > 0.5 ? 1 : 0;
     //Console.WriteLine("Guess: " + normalizedGuess);
-    int actualValue = (int)pair.Value[0]; 
+    int actualValue = (int)value[0];
     //Console.WriteLine("Actual: " + actualValue);
     if (normalizedGuess == actualValue) correctCase++;
     else
     {
-        Console.WriteLine("Case: " + deck.SetToString(pair.Key));
+        Console.WriteLine("Case: "+i+", " + deck.SetToString(key));
         Console.WriteLine("Guess: " + normalizedGuess);
         Console.WriteLine("Actual: " + actualValue);
     }
 }
 
+Console.WriteLine("Correct Case: " + correctCase);
+Console.WriteLine("Error Case: " + (1000-correctCase));
 Console.WriteLine("Accuracy: " + (correctCase / totalCases));
 Console.WriteLine(ann.printWeights());
 

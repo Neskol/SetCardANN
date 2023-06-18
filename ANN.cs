@@ -36,6 +36,7 @@ namespace SetCardANN
         public double forwardPropagate(double[] inputs)
         {
             // assert inputs.length == weights.length:"Input size does not match weight size";
+            Array.Sort(inputs);
             double sum = 0;
             for (int i = 0; i < inputs.Length; i++)
             {
