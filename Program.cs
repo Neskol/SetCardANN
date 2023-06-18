@@ -14,7 +14,7 @@ CardDeck deck = new CardDeck();
 ANN ann = new ANN();
 double[][] inputs = deck.InputOutputSet.Keys.ToArray();
 double[][] outputs = deck.InputOutputSet.Values.ToArray();
-const double learningRate = 0.01;
+const double learningRate = 0.05;
 Console.WriteLine("----------------BEFORE TRAINING---------------------");
 Console.WriteLine("Before training, weights is " + ann.printWeights());
 Console.WriteLine("Initial input result: ");
@@ -31,7 +31,7 @@ Console.WriteLine("Initial input result: ");
 //    }
 //}
 
-ann.train(inputs, outputs, learningRate, 10000);
+ann.train(inputs, outputs, learningRate, 100);
 
 //Console.WriteLine("----------------AFTER TRAINING---------------------");
 //Console.WriteLine("After training, weights is " + ann.printWeights());
