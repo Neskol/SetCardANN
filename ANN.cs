@@ -14,7 +14,7 @@ namespace SetCardANN
         public ANN()
         {
             Random rnd = new Random();
-            weights = new double[3];
+            weights = new double[12];
             bias = rnd.NextDouble();
             // bias = 0;
             for (int i = 0; i < weights.Length; i++)
@@ -23,14 +23,14 @@ namespace SetCardANN
             }
         }
 
-        private double sigmoid(double x)
+        public static double Sigmoid(double x)
         {
             return 1 / (1 + Math.Exp(-x));
         }
 
-        private double dSigmoid(double x)
+        public static double DSigmoid(double x)
         {
-            return sigmoid(x) * (1 - sigmoid(x));
+            return Sigmoid(x) * (1 - Sigmoid(x));
         }
 
         public double forwardPropagate(double[] inputs)
@@ -42,7 +42,7 @@ namespace SetCardANN
             {
                 sum += (inputs[i] + bias) * weights[i];
             }
-            return sigmoid(sum);
+            return Sigmoid(sum);
         }
 
         public void train(double[][] inputs, double[][] desiredOutput, double learningRate, int numIterations)
@@ -59,7 +59,7 @@ namespace SetCardANN
                     averageError += error;
                     for (int i = 0; i < weights.Length; i++)
                     {
-                        double adjustment = error * inputs[j][i] * dSigmoid(output);
+                        double adjustment = error * inputs[j][i] * DSigmoid(output);
                         weights[i] += learningRate * adjustment;
                     }
                 }
@@ -73,7 +73,13 @@ namespace SetCardANN
 
         public string printWeights()
         {
-            return "{" + this.weights[0] + ", " + this.weights[1] + ", " + this.weights[2]+"}, bias="+this.bias;
+            string result = "{";
+            for (int i = 0; i < weights.Length; i++)
+            {
+                result += this.weights[i] + ",";
+            }
+            result += "}, bias=" + this.bias;
+            return result;
         }
     }
 }

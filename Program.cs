@@ -12,8 +12,18 @@ CardDeck deck = new CardDeck();
 
 //Console.ReadKey();
 ANN ann = new ANN();
-double[][] inputs = deck.InputOutputSet.Keys.ToArray();
-double[][] outputs = deck.InputOutputSet.Values.ToArray();
+double[][] inputs = deck.SetInputOutput.Keys.ToArray();
+double[][] outputs = deck.SetInputOutput.Values.ToArray();
+// double[][] inputs = new double[1000][];
+// double[][] outputs = new double[1000][];
+// Random random = new Random();
+// for (int i = 0; i < 1000;i++)
+// {
+//     int index = random.Next(999);
+//     inputs[i] = deck.InputOutputSet.Keys.ElementAt(index);
+//     outputs[i] = deck.InputOutputSet.Values.ElementAt(index);
+// }
+
 const double learningRate = 0.05;
 Console.WriteLine("----------------BEFORE TRAINING---------------------");
 Console.WriteLine("Before training, weights is " + ann.printWeights());
@@ -63,48 +73,49 @@ ann.train(inputs, outputs, learningRate, 100);
 Console.WriteLine("----------------TEST CASE---------------------");
 double totalCases = deck.CardInputOutputSet.Count;
 double correctCase = 0;
-//foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
-//{
-//    double guess = ann.forwardPropagate(pair.Key);
-//    //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
-//    int normalizedGuess = guess>0.5? 1: 0;
-//    //Console.WriteLine("Guess: " + normalizedGuess);
-//    int actualValue = (int)pair.Value[0]; 
-//    //Console.WriteLine("Actual: " + actualValue);
-//    if (normalizedGuess == actualValue) correctCase++;
+foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
+{
+   double guess = ann.forwardPropagate(pair.Key);
+    //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
+    //guess = ANN.DSigmoid(guess);
+    int normalizedGuess = guess>0.5? 1: 0;
+   //Console.WriteLine("Guess: " + normalizedGuess);
+   int actualValue = (int)pair.Value[0]; 
+   //Console.WriteLine("Actual: " + actualValue);
+   if (normalizedGuess == actualValue) correctCase++;
 //    else
 //    {
-//        Console.WriteLine("Case: " + deck.SetToString(pair.Key));
+//        //Console.WriteLine("Case: " + deck.SetToString(pair.Key));
 //        Console.WriteLine("Guess: " + normalizedGuess);
 //        Console.WriteLine("Actual: " + actualValue);
 //    }
-//}
-
-Random random = new Random();
-int i;
-for (int c = 0; c < 1000; c++)
-{
-    i = random.Next(53000);
-    double[] key = deck.InputOutputSet.Keys.ElementAt(i);
-    double[] value = deck.InputOutputSet.Values.ElementAt(i);
-    double guess = ann.forwardPropagate(key);
-    //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
-    int normalizedGuess = guess > 0.5 ? 1 : 0;
-    //Console.WriteLine("Guess: " + normalizedGuess);
-    int actualValue = (int)value[0];
-    //Console.WriteLine("Actual: " + actualValue);
-    if (normalizedGuess == actualValue) correctCase++;
-    else
-    {
-        Console.WriteLine("Case: "+i+", " + deck.SetToString(key));
-        Console.WriteLine("Guess: " + normalizedGuess);
-        Console.WriteLine("Actual: " + actualValue);
-    }
 }
 
+// Random random = new Random();
+// int i;
+// for (int c = 0; c < 1000; c++)
+// {
+//     i = random.Next(53000);
+//     double[] key = deck.InputOutputSet.Keys.ElementAt(i);
+//     double[] value = deck.InputOutputSet.Values.ElementAt(i);
+//     double guess = ann.forwardPropagate(key);
+//     //Console.WriteLine("Case: "+deck.SetToString(pair.Key));
+//     int normalizedGuess = guess > 0.5 ? 1 : 0;
+//     //Console.WriteLine("Guess: " + normalizedGuess);
+//     int actualValue = (int)value[0];
+//     //Console.WriteLine("Actual: " + actualValue);
+//     if (normalizedGuess == actualValue) correctCase++;
+//     else
+//     {
+//         Console.WriteLine("Case: "+i+", " + deck.SetToString(key));
+//         Console.WriteLine("Guess: " + normalizedGuess);
+//         Console.WriteLine("Actual: " + actualValue);
+//     }
+// }
+
 Console.WriteLine("Correct Case: " + correctCase);
-Console.WriteLine("Error Case: " + (1000-correctCase));
-Console.WriteLine("Accuracy: " + (correctCase / totalCases));
+Console.WriteLine("Error Case: " + (totalCases-correctCase));
+Console.WriteLine("Accuracy: " + (correctCase / (totalCases)));
 Console.WriteLine(ann.printWeights());
 
 Console.WriteLine("NOTE: THE TEST CASE CONTAINS 3 ZEROS AND THUS RESULT IN CONSTANT VALUE IN SIGMOID(X)");

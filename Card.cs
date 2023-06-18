@@ -10,14 +10,22 @@ namespace SetCardANN
     {
         private string[] colors = { "red", "green", "blue" };
         private string[] shadings = { "empty", "lined", "solid" };
-        private string[] shapes = {"squiggle", "diamond", "oval"};
-        private int[] numbers = {1, 2, 3};
+        private string[] shapes = { "squiggle", "diamond", "oval" };
+        private int[] numbers = { 1, 2, 3 };
 
         public string Color { get; private set; }
         public string Shading { get; private set; }
         public string Shape { get; private set; }
         public int Number { get; private set; }
         public int IntVal { get; private set; }
+        public double[] DoubleValSet
+        {
+            get
+            {
+                double[] result = { Array.IndexOf(colors, this.Color), Array.IndexOf(shapes, this.Shape), Array.IndexOf(shadings, this.Shading), Array.IndexOf(numbers, this.Number) };
+                return result;
+            }
+        }
 
 
         public Card(int color, int shading, int shape, int number, int intVal)

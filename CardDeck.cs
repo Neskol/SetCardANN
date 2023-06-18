@@ -10,7 +10,7 @@ namespace SetCardANN
     {
         public List<Card> Cards {  get; private set; }
         public List<Card[]> SetBundle { get; private set; }
-
+        public Dictionary<double[], double[]> SetInputOutput { get; private set; }
         public Dictionary<double[], double[]> InputOutputSet { get; private set; }
         public Dictionary<Card[], double[]> CardInputOutputSet { get; private set; }
 
@@ -18,6 +18,7 @@ namespace SetCardANN
         {
             this.Cards = new List<Card>();
             this.SetBundle = new List<Card[]>();
+            this.SetInputOutput = new Dictionary<double[], double[]>();
             this.InputOutputSet = new Dictionary<double[], double[]>();
             this.CardInputOutputSet = new Dictionary<Card[], double[]>();
             this.InitializeCards();
@@ -83,7 +84,12 @@ namespace SetCardANN
                 {
                     foreach (Card c3 in this.Cards)
                     {
-                        double[] inKey = { c1.IntVal, c2.IntVal, c3.IntVal };
+                        List<double> doubleArrayInKey = new List<double>();
+                        doubleArrayInKey.AddRange(c1.DoubleValSet);
+                        doubleArrayInKey.AddRange(c2.DoubleValSet);
+                        doubleArrayInKey.AddRange(c3.DoubleValSet);
+                        double[] inKey = doubleArrayInKey.ToArray();
+                        //double[] inKey = { c1.IntVal, c2.IntVal, c3.IntVal };
                         if (this.IsDistinctCards(c1,c2,c3)&&this.CheckSet(c1, c2, c3))
                         {
                             Card[] newSet = { c1, c2, c3 };
@@ -96,6 +102,7 @@ namespace SetCardANN
                             {
                                 this.SetBundle.Add(newSet);
                                 double[] outKey = { 1 };
+                                this.SetInputOutput.Add(inKey, outKey);
                                 this.InputOutputSet.Add(inKey,outKey);
                                 this.CardInputOutputSet.Add(newSet, outKey);
                                 // Console.WriteLine(this.SetToString(newSet));
