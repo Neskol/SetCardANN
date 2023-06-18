@@ -72,7 +72,7 @@ namespace SetCardANN
 
         public string printWeights()
         {
-            return "{" + this.weights[0] + ", " + this.weights[1] + ", " + this.weights[2]+"}";
+            return "{" + this.weights[0] + ", " + this.weights[1] + ", " + this.weights[2]+"}, bias="+this.bias;
         }
     }
 }

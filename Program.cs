@@ -32,7 +32,7 @@ Console.WriteLine("Initial input result: ");
 //    }
 //}
 
-ann.train(inputs, outputs, learningRate, 10000);
+ann.train(inputs, outputs, learningRate, 2);
 
 //Console.WriteLine("----------------AFTER TRAINING---------------------");
 //Console.WriteLine("After training, weights is " + ann.printWeights());
@@ -71,8 +71,14 @@ foreach (KeyValuePair<double[], double[]> pair in deck.InputOutputSet)
     int normalizedGuess = guess>0.5? 1: 0;
     //Console.WriteLine("Guess: " + normalizedGuess);
     int actualValue = (int)pair.Value[0]; 
-    //Console.WriteLine("Actrual: " + actualValue);
+    //Console.WriteLine("Actual: " + actualValue);
     if (normalizedGuess == actualValue) correctCase++;
+    else
+    {
+        Console.WriteLine("Case: " + deck.SetToString(pair.Key));
+        Console.WriteLine("Guess: " + normalizedGuess);
+        Console.WriteLine("Actual: " + actualValue);
+    }
 }
 
 Console.WriteLine("Accuracy: " + (correctCase / totalCases));
